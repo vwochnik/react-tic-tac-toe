@@ -5,3 +5,7 @@
 .History th, .History td {
   border: 1px solid #999;
 }
+
+.History tr.bold {
+  background-color: #eee;
+}

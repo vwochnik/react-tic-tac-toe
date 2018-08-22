@@ -16,9 +16,10 @@ export default class History extends Component {
       }
 
       const player = (move % 2 === 0) ? 'X' : 'O';
+      const isBold = (move === this.props.currentStep);
 
       return (
-        <tr key={move}>
+        <tr key={move} className={(isBold)?"bold":""}>
           <td>{move}</td>
           <td>{player}</td>
           <td>{row}</td>

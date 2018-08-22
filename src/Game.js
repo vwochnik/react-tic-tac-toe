@@ -77,6 +77,7 @@ export default class Game extends Component {
           <div>{status}</div>
           <History
             history={history}
+            currentStep={this.state.stepNumber}
             onGoto={(step) => this.jumpTo(step)}
           />
         </div>
