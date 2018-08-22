@@ -19,6 +19,7 @@ export default class Game extends Component {
     this.state = {
       history: [{
         squares: Array(9).fill(null),
+        moves: []
       }],
       stepNumber: 0,
       xIsNext: true
@@ -28,16 +29,21 @@ export default class Game extends Component {
   handleClick(i) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1),
           current = history[history.length - 1],
-          squares = current.squares.slice();
+          squares = current.squares.slice(),
+          moves = current.moves.slice();
+
     if ((calculateWinner(squares) !== null) || (squares[i] !== null)) {
       return;
     }
 
     squares[i] = this.state.xIsNext ? 'X' : 'O';
+    moves.push({
+      row: Math.floor(i / 3),
+      col: i % 3
+    });
+
     this.setState({
-      history: history.concat([{
-        squares: squares
-      }]),
+      history: history.concat([{ squares, moves }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext
     });
@@ -63,9 +69,14 @@ export default class Game extends Component {
     }
 
     const moves = history.map((step, move) => {
-      const desc = move ?
+      let desc = move ?
         'Go to move #' + move :
         'Go to game start';
+
+      if (step.moves.length) {
+        const lastMove = step.moves[step.moves.length - 1];
+        desc += ` (${lastMove.row}, ${lastMove.col})`;
+      }
       return (
         <li key={move}>
           <button onClick={() => this.jumpTo(move)}>{desc}</button>
