@@ -1,0 +1,7 @@
+.History {
+  border-collapse: collapse;
+}
+
+.History th, .History td {
+  border: 1px solid #999;
+}

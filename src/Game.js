@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Board from './Board';
+import History from './History';
 
 const lines = [
   [0, 1, 2],
@@ -19,7 +20,7 @@ export default class Game extends Component {
     this.state = {
       history: [{
         squares: Array(9).fill(null),
-        moves: []
+        move: null
       }],
       stepNumber: 0,
       xIsNext: true
@@ -29,21 +30,20 @@ export default class Game extends Component {
   handleClick(i) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1),
           current = history[history.length - 1],
-          squares = current.squares.slice(),
-          moves = current.moves.slice();
+          squares = current.squares.slice();
 
     if ((calculateWinner(squares) !== null) || (squares[i] !== null)) {
       return;
     }
 
     squares[i] = this.state.xIsNext ? 'X' : 'O';
-    moves.push({
+    current.move = {
       row: Math.floor(i / 3),
       col: i % 3
-    });
+    };
 
     this.setState({
-      history: history.concat([{ squares, moves }]),
+      history: history.concat([{ squares, move: null }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext
     });
@@ -68,22 +68,6 @@ export default class Game extends Component {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
 
-    const moves = history.map((step, move) => {
-      let desc = move ?
-        'Go to move #' + move :
-        'Go to game start';
-
-      if (step.moves.length) {
-        const lastMove = step.moves[step.moves.length - 1];
-        desc += ` (${lastMove.row}, ${lastMove.col})`;
-      }
-      return (
-        <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
-        </li>
-      );
-    });
-
     return (
       <div className="game">
         <div className="game-board">
@@ -91,7 +75,10 @@ export default class Game extends Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>{moves}</ol>
+          <History
+            history={history}
+            onGoto={(step) => this.jumpTo(step)}
+          />
         </div>
       </div>
     );
